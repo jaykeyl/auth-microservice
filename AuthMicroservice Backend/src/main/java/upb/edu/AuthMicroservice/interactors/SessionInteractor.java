@@ -2,7 +2,6 @@ package upb.edu.AuthMicroservice.interactors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import upb.edu.AuthMicroservice.models.Session;
 import upb.edu.AuthMicroservice.repositories.SessionRepository;
 
@@ -22,6 +21,7 @@ public class SessionInteractor {
         session.setCreatedAt(LocalDateTime.now());
         session.setExpiresAt(LocalDateTime.now().plusHours(1));
         session.setIsValid(true);
+
         sessionRepository.save(session);
         return session.getId();
     }
