@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { object, string } from "yup";
 import type { InferType } from "yup";
+import { Form, Input } from "antd";
 import SocialLoginButtons from "./SocialLoginButtons";
-import FormInput from "./FormInput";
 import PrimaryButton from "./PrimaryButton";
 
 const signUpSchema = object({
@@ -16,52 +16,38 @@ const signUpSchema = object({
 type SignUpFormData = InferType<typeof signUpSchema>;
 
 export default function SignUpForm() {
-  const [formData, setFormData] = useState<SignUpFormData>({
-    name: "",
-    email: "",
-    password: "",
-  });
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [form] = Form.useForm<SignUpFormData>();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const validateField = async (name: string, value: string) => {
-    try {
-      await signUpSchema.validateAt(name, { [name]: value });
-      setErrors((prev) => ({ ...prev, [name]: "" }));
-    } catch (error) {
-      if (error instanceof Error) {
-        setErrors((prev) => ({ ...prev, [name]: error.message }));
-      }
-    }
-  };
-
-  const handleInputChange = (name: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    validateField(name, value);
-  };
-
-  const onSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onFinish = async (values: SignUpFormData) => {
     setIsSubmitting(true);
-
     try {
-      await signUpSchema.validate(formData, { abortEarly: false });
-      console.log("Registro:", formData);
+      await signUpSchema.validate(values, { abortEarly: false });
+      console.log("Registro:", values);
     } catch (error) {
-      const newErrors: Record<string, string> = {};
       if (error && typeof error === "object" && "inner" in error) {
         const validationError = error as {
           inner?: Array<{ path?: string; message: string }>;
         };
-        validationError.inner?.forEach((err) => {
-          if (err.path) newErrors[err.path] = err.message;
-        });
-        setErrors(newErrors);
+
+        const fieldErrors = validationError.inner?.map((err) => {
+          if (!err.path) return null;
+          return {
+            name: err.path as "name" | "email" | "password",
+            errors: [err.message],
+          };
+        }).filter(Boolean) as {
+          name: "name" | "email" | "password";
+          errors: string[];
+        }[];
+
+        form.setFields(fieldErrors);
       }
     } finally {
       setIsSubmitting(false);
     }
   };
+
   return (
     <div
       style={{
@@ -79,37 +65,29 @@ export default function SignUpForm() {
 
       <SocialLoginButtons />
 
-      <span style={{ fontSize: "12px" }}>
-        or use your email for registration
-      </span>
+      <span style={{ fontSize: "12px" }}>or use your email for registration</span>
 
-      <form onSubmit={onSubmit} style={{ width: "100%" }}>
-        <FormInput
-          type="text"
-          placeholder="Name"
-          value={formData.name}
-          error={errors.name}
-          onChange={(e) => handleInputChange("name", e.target.value)}
-        />
+      <Form
+        form={form}
+        layout="vertical"
+        onFinish={onFinish}
+        style={{ width: "100%", marginTop: "16px" }}
+      >
+        <Form.Item name="name">
+          <Input placeholder="Name" size="large"/>
+        </Form.Item>
 
-        <FormInput
-          type="email"
-          placeholder="Email"
-          value={formData.email}
-          error={errors.email}
-          onChange={(e) => handleInputChange("email", e.target.value)}
-        />
+        <Form.Item name="email">
+          <Input placeholder="Email" type="email" size="large"/>
+        </Form.Item>
 
-        <FormInput
-          type="password"
-          placeholder="Password"
-          value={formData.password}
-          error={errors.password}
-          onChange={(e) => handleInputChange("password", e.target.value)}
-        />
+        <Form.Item name="password">
+          <Input.Password placeholder="Password" size="large" />
+        </Form.Item>
+
 
         <PrimaryButton
-          type="submit"
+          htmlType="submit"
           disabled={isSubmitting}
           style={{
             marginTop: "10px",
@@ -119,7 +97,7 @@ export default function SignUpForm() {
         >
           {isSubmitting ? "Creating..." : "Sign Up"}
         </PrimaryButton>
-      </form>
+      </Form>
     </div>
   );
 }
