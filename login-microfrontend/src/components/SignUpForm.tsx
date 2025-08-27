@@ -1,12 +1,10 @@
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
+import { useState } from "react";
 import { object, string } from "yup";
 import type { InferType } from "yup";
 import SocialLoginButtons from "./SocialLoginButtons";
 import FormInput from "./FormInput";
 import PrimaryButton from "./PrimaryButton";
 
-// Esquema de validación local
 const signUpSchema = object({
   name: string().required("Nombre requerido"),
   email: string().required("Email requerido").email("Email inválido"),
@@ -18,19 +16,52 @@ const signUpSchema = object({
 type SignUpFormData = InferType<typeof signUpSchema>;
 
 export default function SignUpForm() {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<SignUpFormData>({
-    resolver: yupResolver(signUpSchema),
-    mode: "onChange",
+  const [formData, setFormData] = useState<SignUpFormData>({
+    name: "",
+    email: "",
+    password: "",
   });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const onSubmit = async (data: SignUpFormData) => {
-    console.log("Registro:", data);
+  const validateField = async (name: string, value: string) => {
+    try {
+      await signUpSchema.validateAt(name, { [name]: value });
+      setErrors((prev) => ({ ...prev, [name]: "" }));
+    } catch (error) {
+      if (error instanceof Error) {
+        setErrors((prev) => ({ ...prev, [name]: error.message }));
+      }
+    }
   };
 
+  const handleInputChange = (name: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    validateField(name, value);
+  };
+
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      await signUpSchema.validate(formData, { abortEarly: false });
+      console.log("Registro:", formData);
+    } catch (error) {
+      const newErrors: Record<string, string> = {};
+      if (error && typeof error === "object" && "inner" in error) {
+        const validationError = error as {
+          inner?: Array<{ path?: string; message: string }>;
+        };
+        validationError.inner?.forEach((err) => {
+          if (err.path) newErrors[err.path] = err.message;
+        });
+        setErrors(newErrors);
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
   return (
     <div
       style={{
@@ -52,26 +83,29 @@ export default function SignUpForm() {
         or use your email for registration
       </span>
 
-      <form onSubmit={handleSubmit(onSubmit)} style={{ width: "100%" }}>
+      <form onSubmit={onSubmit} style={{ width: "100%" }}>
         <FormInput
           type="text"
           placeholder="Name"
-          error={errors.name?.message}
-          {...register("name")}
+          value={formData.name}
+          error={errors.name}
+          onChange={(e) => handleInputChange("name", e.target.value)}
         />
 
         <FormInput
           type="email"
           placeholder="Email"
-          error={errors.email?.message}
-          {...register("email")}
+          value={formData.email}
+          error={errors.email}
+          onChange={(e) => handleInputChange("email", e.target.value)}
         />
 
         <FormInput
           type="password"
           placeholder="Password"
-          error={errors.password?.message}
-          {...register("password")}
+          value={formData.password}
+          error={errors.password}
+          onChange={(e) => handleInputChange("password", e.target.value)}
         />
 
         <PrimaryButton

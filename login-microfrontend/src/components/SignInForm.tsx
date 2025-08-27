@@ -1,5 +1,4 @@
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
+import { useState } from "react";
 import { object, string } from "yup";
 import type { InferType } from "yup";
 import SocialLoginButtons from "./SocialLoginButtons";
@@ -14,17 +13,50 @@ const signInSchema = object({
 type SignInFormData = InferType<typeof signInSchema>;
 
 export default function SignInForm() {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<SignInFormData>({
-    resolver: yupResolver(signInSchema),
-    mode: "onChange",
+  const [formData, setFormData] = useState<SignInFormData>({
+    email: "",
+    password: "",
   });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const onSubmit = async (data: SignInFormData) => {
-    console.log("Login:", data);
+  const validateField = async (name: string, value: string) => {
+    try {
+      await signInSchema.validateAt(name, { [name]: value });
+      setErrors((prev) => ({ ...prev, [name]: "" }));
+    } catch (error) {
+      if (error instanceof Error) {
+        setErrors((prev) => ({ ...prev, [name]: error.message }));
+      }
+    }
+  };
+
+  const handleInputChange = (name: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    validateField(name, value);
+  };
+
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      await signInSchema.validate(formData, { abortEarly: false });
+      console.log("Login:", formData);
+    } catch (error) {
+      const newErrors: Record<string, string> = {};
+      if (error && typeof error === "object" && "inner" in error) {
+        const validationError = error as {
+          inner?: Array<{ path?: string; message: string }>;
+        };
+        validationError.inner?.forEach((err) => {
+          if (err.path) newErrors[err.path] = err.message;
+        });
+        setErrors(newErrors);
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -46,19 +78,21 @@ export default function SignInForm() {
 
       <span style={{ fontSize: "12px" }}>or use your account</span>
 
-      <form onSubmit={handleSubmit(onSubmit)} style={{ width: "100%" }}>
+      <form onSubmit={onSubmit} style={{ width: "100%" }}>
         <FormInput
           type="email"
           placeholder="Email"
-          error={errors.email?.message}
-          {...register("email")}
+          value={formData.email}
+          error={errors.email}
+          onChange={(e) => handleInputChange("email", e.target.value)}
         />
 
         <FormInput
           type="password"
           placeholder="Password"
-          error={errors.password?.message}
-          {...register("password")}
+          value={formData.password}
+          error={errors.password}
+          onChange={(e) => handleInputChange("password", e.target.value)}
         />
 
         <a
