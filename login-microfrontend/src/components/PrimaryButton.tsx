@@ -25,9 +25,11 @@ export default function PrimaryButton({
 
   const primaryStyle = {
     ...baseStyle,
-    border: "1px solid #FF4B2B",
-    backgroundColor: "#FF4B2B",
+    border: "1px solid #2563eb",
+    background:
+      "linear-gradient(135deg, #2563eb 0%, #3b82f6 70%, #7c3aed 100%)",
     color: "#FFFFFF",
+    transition: "all 0.3s ease",
   };
 
   const outlineStyle = {
@@ -35,6 +37,7 @@ export default function PrimaryButton({
     border: "1px solid #FFFFFF",
     backgroundColor: "transparent",
     color: "#FFFFFF",
+    transition: "all 0.3s ease",
   };
 
   return (
@@ -42,6 +45,22 @@ export default function PrimaryButton({
       style={{
         ...(variant === "primary" ? primaryStyle : outlineStyle),
         ...style,
+      }}
+      onMouseEnter={(e) => {
+        if (variant === "primary") {
+          e.currentTarget.style.transform = "translateY(-2px)";
+          e.currentTarget.style.boxShadow = "0 8px 25px rgba(37, 99, 235, 0.3)";
+        } else {
+          e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.1)";
+        }
+      }}
+      onMouseLeave={(e) => {
+        if (variant === "primary") {
+          e.currentTarget.style.transform = "translateY(0)";
+          e.currentTarget.style.boxShadow = "none";
+        } else {
+          e.currentTarget.style.backgroundColor = "transparent";
+        }
       }}
       {...props}
     >

@@ -19,12 +19,13 @@ export default function LoginContainer() {
       style={{
         backgroundColor: "#fff",
         borderRadius: "10px",
-        boxShadow: "0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)",
+        boxShadow:
+          "0 14px 28px rgba(37, 99, 235, 0.25), 0 10px 10px rgba(37, 99, 235, 0.15)",
         position: "relative",
         overflow: "hidden",
-        width: "768px",
+        width: "1000px",
         maxWidth: "100%",
-        minHeight: "480px",
+        minHeight: "680px",
       }}
     >
       {/* Sign Up */}
@@ -76,7 +77,8 @@ export default function LoginContainer() {
       >
         <div
           style={{
-            background: "linear-gradient(to right, #FF4B2B, #FF416C)",
+            background:
+              "linear-gradient(135deg, #1e3a8a 0%, #2563eb 40%, #7c3aed 100%)",
             backgroundRepeat: "no-repeat",
             backgroundSize: "cover",
             backgroundPosition: "0 0",
