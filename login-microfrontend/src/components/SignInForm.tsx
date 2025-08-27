@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { object, string } from "yup";
 import type { InferType } from "yup";
 import SocialLoginButtons from "./SocialLoginButtons";
@@ -13,6 +14,7 @@ const signInSchema = object({
 type SignInFormData = InferType<typeof signInSchema>;
 
 export default function SignInForm() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState<SignInFormData>({
     email: "",
     password: "",
@@ -42,7 +44,8 @@ export default function SignInForm() {
 
     try {
       await signInSchema.validate(formData, { abortEarly: false });
-      console.log("Login:", formData);
+      // Si la validación es exitosa, redirige a /success
+      navigate("/success");
     } catch (error) {
       const newErrors: Record<string, string> = {};
       if (error && typeof error === "object" && "inner" in error) {
