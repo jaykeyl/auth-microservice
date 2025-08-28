@@ -2,9 +2,11 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { object, string } from "yup";
 import type { InferType } from "yup";
+import { Form, Input, Typography } from "antd";
 import SocialLoginButtons from "./SocialLoginButtons";
-import FormInput from "./FormInput";
 import PrimaryButton from "./PrimaryButton";
+
+const { Text } = Typography;
 
 const signInSchema = object({
   email: string().required("Email requerido").email("Email inválido"),
@@ -20,42 +22,32 @@ export default function SignInForm() {
     password: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [form] = Form.useForm<SignInFormData>();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const validateField = async (name: string, value: string) => {
-    try {
-      await signInSchema.validateAt(name, { [name]: value });
-      setErrors((prev) => ({ ...prev, [name]: "" }));
-    } catch (error) {
-      if (error instanceof Error) {
-        setErrors((prev) => ({ ...prev, [name]: error.message }));
-      }
-    }
-  };
-
-  const handleInputChange = (name: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    validateField(name, value);
-  };
-
-  const onSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onFinish = async (values: SignInFormData) => {
     setIsSubmitting(true);
-
     try {
       await signInSchema.validate(formData, { abortEarly: false });
       // Si la validación es exitosa, redirige a /success
       navigate("/success");
+      await signInSchema.validate(values, { abortEarly: false });
+      console.log("Login:", values);
     } catch (error) {
-      const newErrors: Record<string, string> = {};
       if (error && typeof error === "object" && "inner" in error) {
         const validationError = error as {
           inner?: Array<{ path?: string; message: string }>;
         };
+        const fieldErrors: Record<string, string[]> = {};
         validationError.inner?.forEach((err) => {
-          if (err.path) newErrors[err.path] = err.message;
+          if (err.path) fieldErrors[err.path] = [err.message];
         });
-        setErrors(newErrors);
+        form.setFields(
+          Object.entries(fieldErrors).map(([name, errors]) => ({
+            name: name as any,
+            errors,
+          }))
+        );
       }
     } finally {
       setIsSubmitting(false);
@@ -65,7 +57,7 @@ export default function SignInForm() {
   return (
     <div
       style={{
-        backgroundColor: "#FFFFFF",
+        backgroundColor: "#fff",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -79,30 +71,27 @@ export default function SignInForm() {
 
       <SocialLoginButtons />
 
-      <span style={{ fontSize: "12px" }}>or use your account</span>
+      <Text style={{ fontSize: 12 }}>or use your account</Text>
 
-      <form onSubmit={onSubmit} style={{ width: "100%" }}>
-        <FormInput
-          type="email"
-          placeholder="Email"
-          value={formData.email}
-          error={errors.email}
-          onChange={(e) => handleInputChange("email", e.target.value)}
-        />
+      <Form
+        form={form}
+        layout="vertical"
+        onFinish={onFinish}
+        style={{ width: "100%", marginTop: 16 }}
+      >
+        <Form.Item name="email">
+          <Input placeholder="Email" type="email" size="large" />
+        </Form.Item>
 
-        <FormInput
-          type="password"
-          placeholder="Password"
-          value={formData.password}
-          error={errors.password}
-          onChange={(e) => handleInputChange("password", e.target.value)}
-        />
+        <Form.Item name="password">
+          <Input.Password placeholder="Password" size="large" />
+        </Form.Item>
 
         <a
           href="#"
           style={{
             color: "#2563eb",
-            fontSize: "14px",
+            fontSize: 14,
             textDecoration: "none",
             margin: "15px 0",
             display: "block",
@@ -119,7 +108,7 @@ export default function SignInForm() {
         </a>
 
         <PrimaryButton
-          type="submit"
+          htmlType="submit"
           disabled={isSubmitting}
           style={{
             opacity: isSubmitting ? 0.7 : 1,
@@ -128,7 +117,7 @@ export default function SignInForm() {
         >
           {isSubmitting ? "Signing In..." : "Sign In"}
         </PrimaryButton>
-      </form>
+      </Form>
     </div>
   );
 }
