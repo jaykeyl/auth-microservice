@@ -1,3 +1,16 @@
+/* Mensaje de éxito para la página de login exitoso */
+.login-success-message {
+  color: #10b981;
+  background: #fff;
+  padding: 2rem 3rem;
+  border-radius: 12px;
+  font-size: 1.3rem;
+  font-weight: 500;
+  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.08);
+  margin-top: 20px;
+  text-align: center;
+  letter-spacing: 1px;
+}
 /* Variables de color azul-púrpura */
 :root {
   /* Primary Colors - Login Theme */

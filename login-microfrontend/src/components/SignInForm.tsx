@@ -1,4 +1,6 @@
 import { useState } from "react";
+import PopUpForgotPassword from "./PopUpForgotPassword";
+import { useNavigate } from "react-router-dom";
 import { object, string } from "yup";
 import type { InferType } from "yup";
 import { Form, Input, Typography } from "antd";
@@ -14,7 +16,10 @@ const signInSchema = object({
 
 type SignInFormData = InferType<typeof signInSchema>;
 
+
 export default function SignInForm() {
+  const [showForgot, setShowForgot] = useState(false);
+  const navigate = useNavigate();
   const [form] = Form.useForm<SignInFormData>();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -22,6 +27,8 @@ export default function SignInForm() {
     setIsSubmitting(true);
     try {
       await signInSchema.validate(values, { abortEarly: false });
+      // Si la validación es exitosa, redirige a /success
+      navigate("/success");
       console.log("Login:", values);
     } catch (error) {
       if (error && typeof error === "object" && "inner" in error) {
@@ -77,6 +84,7 @@ export default function SignInForm() {
           <Input.Password placeholder="Password" size="large" />
         </Form.Item>
 
+
         <a
           href="#"
           style={{
@@ -87,15 +95,21 @@ export default function SignInForm() {
             display: "block",
             transition: "color 0.3s ease",
           }}
-          onMouseEnter={(e) => {
+          onClick={e => {
+            e.preventDefault();
+            setShowForgot(true);
+          }}
+          onMouseEnter={e => {
             e.currentTarget.style.color = "#1d4ed8";
           }}
-          onMouseLeave={(e) => {
+          onMouseLeave={e => {
             e.currentTarget.style.color = "#2563eb";
           }}
         >
           Forgot your password?
         </a>
+
+        <PopUpForgotPassword open={showForgot} onClose={() => setShowForgot(false)} />
 
         <PrimaryButton
           htmlType="submit"
