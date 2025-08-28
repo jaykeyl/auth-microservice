@@ -13,12 +13,12 @@ import static org.springframework.web.servlet.function.RouterFunctions.route;
 
 
 @Configuration
-public class SessionRoutes {
+public class SessionRoutess {
 
     private final UserController userController;
     private final SessionController sessionController;
 
-    public SessionRoutes(UserController userController, SessionController sessionController) {
+    public SessionRoutess(UserController userController, SessionController sessionController) {
         this.userController = userController;
         this.sessionController = sessionController;
     }
