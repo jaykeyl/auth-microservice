@@ -1,4 +1,7 @@
+import { Typography } from "antd";
 import PrimaryButton from "./PrimaryButton";
+
+const { Title, Paragraph } = Typography;
 
 interface OverlayPanelProps {
   title: string;
@@ -43,18 +46,21 @@ export default function OverlayPanel({
         [position]: 0,
       }}
     >
-      <h1 style={{ fontWeight: "bold", margin: 0 }}>{title}</h1>
-      <p
+      <Title level={2} style={{ margin: 0}}>
+        {title}
+      </Title>
+      <Paragraph
         style={{
-          fontSize: "14px",
+          fontSize: 14,
           fontWeight: 100,
           lineHeight: "20px",
           letterSpacing: "0.5px",
           margin: "20px 0 30px",
+          color: "#fff"
         }}
       >
         {description}
-      </p>
+      </Paragraph>
       <PrimaryButton variant="outline" onClick={onClick}>
         {buttonText}
       </PrimaryButton>
