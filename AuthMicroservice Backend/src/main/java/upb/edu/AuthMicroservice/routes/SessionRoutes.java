@@ -13,18 +13,18 @@ import static org.springframework.web.servlet.function.RouterFunctions.route;
 
 
 @Configuration
-public class Routes {
+public class SessionRoutes {
 
     private final UserController userController;
     private final SessionController sessionController;
 
-    public Routes(UserController userController, SessionController sessionController) {
+    public SessionRoutes(UserController userController, SessionController sessionController) {
         this.userController = userController;
         this.sessionController = sessionController;
     }
 
     @Bean
-    public RouterFunction<ServerResponse> routerFunction(RoleController roleController) {
+    public RouterFunction<ServerResponse> MainrouterFunction(RoleController roleController) {
         return route()
                 .path("/api", builder -> builder.add(RoleRoutes.roleRouter(roleController)))
                 .build();
@@ -36,7 +36,7 @@ public class Routes {
                 .build();
     }
     @Bean 
-    public RouterFunction<ServerResponse> sessionRoutes(SessionController controller){
+    public RouterFunction<ServerResponse> sessionRouterFunctionInternal(SessionController controller){
         return route()
                 .POST("/generate-session", sessionController::generateSession)
                 .POST("/refresh-token", sessionController::refreshToken)
