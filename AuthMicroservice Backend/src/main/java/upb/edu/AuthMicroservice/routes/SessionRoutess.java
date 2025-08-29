@@ -5,9 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.function.RouterFunction;
 import org.springframework.web.servlet.function.ServerResponse;
 
-import upb.edu.AuthMicroservice.controllers.RoleController;
 import upb.edu.AuthMicroservice.controllers.SessionController;
-import upb.edu.AuthMicroservice.controllers.UserController;
 
 import static org.springframework.web.servlet.function.RouterFunctions.route;
 
@@ -15,25 +13,10 @@ import static org.springframework.web.servlet.function.RouterFunctions.route;
 @Configuration
 public class SessionRoutess {
 
-    private final UserController userController;
     private final SessionController sessionController;
 
-    public SessionRoutess(UserController userController, SessionController sessionController) {
-        this.userController = userController;
+    public SessionRoutess(SessionController sessionController) {
         this.sessionController = sessionController;
-    }
-
-    @Bean
-    public RouterFunction<ServerResponse> MainrouterFunction(RoleController roleController) {
-        return route()
-                .path("/api", builder -> builder.add(RoleRoutes.roleRouter(roleController)))
-                .build();
-    }
-    @Bean
-    public RouterFunction<ServerResponse> userRoutesFunction(UserController controller) {
-        return route()
-                .path("/auth", builder -> builder.add(UserRoutes.userRouter(controller)))
-                .build();
     }
     @Bean 
     public RouterFunction<ServerResponse> sessionRouterFunctionInternal(SessionController controller){
