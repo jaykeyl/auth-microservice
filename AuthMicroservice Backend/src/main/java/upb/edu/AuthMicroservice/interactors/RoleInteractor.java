@@ -15,8 +15,17 @@ public class RoleInteractor {
     public Role createRole(Role role) {
         return roleService.createRole(role);
     }
+  
+    public boolean deleteRole(Integer id) {
+        return roleService.deleteRole(id);
+    }
 
      public List<Role> getAllRoles() {
         return roleService.getAllRoles();
     }
+
+    public Role updateRole(Integer id, Role role) {
+        return roleService.updateRole(id, role);
+    }
+    
 }

@@ -24,7 +24,7 @@ public class UserInteractor {
 
     public boolean changePassword(String email, String oldPassword, String newPassword) {
         Optional<User> userOpt = findByEmail(email);
-        
+
         if (userOpt.isPresent()) {
             User user = userOpt.get();
             if (user.getPassword().equals(oldPassword)) {
@@ -33,7 +33,7 @@ public class UserInteractor {
                 return true;
             }
         }
-        
+
         return false;
     }
 }

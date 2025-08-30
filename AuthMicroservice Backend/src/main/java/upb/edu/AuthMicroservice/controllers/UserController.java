@@ -1,7 +1,6 @@
 package upb.edu.AuthMicroservice.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.function.ServerRequest;
 import org.springframework.web.servlet.function.ServerResponse;
@@ -15,13 +14,14 @@ import upb.edu.AuthMicroservice.models.Response;
 import upb.edu.AuthMicroservice.models.User;
 import upb.edu.AuthMicroservice.services.UserService;
 
+import java.io.IOException;
 import java.util.Map;
 
-import java.io.IOException;
 import jakarta.servlet.ServletException;
 
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 @Component
 public class UserController {
@@ -61,7 +61,7 @@ public class UserController {
                 changeRequest.getOldPassword(),
                 changeRequest.getNewPassword()
             );
-            
+
             Map<String, Object> responseBody = (Map<String, Object>) response.getBody();
             return ServerResponse
                     .status(response.getStatusCode())
