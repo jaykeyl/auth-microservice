@@ -72,4 +72,22 @@ public class UserService {
                     .body(Map.of("code", 401, "msg", "Datos incorrectos"));
         }
     }
+
+    public ResponseEntity<Object> validateEmail(String email) {
+        Optional<User> userOpt = userInteractor.findByEmail(email);
+        
+        if (userOpt.isPresent()) {
+            return ResponseEntity.ok(Map.of(
+                "code", 200,
+                "msg", "Email verified"
+            ));
+        } else {
+            return ResponseEntity
+                .status(404)
+                .body(Map.of(
+                    "code", 404,
+                    "msg", "Email not found"
+                ));
+        }
+    }
 }
