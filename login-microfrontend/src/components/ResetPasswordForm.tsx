@@ -25,9 +25,9 @@ export default function ResetPasswordForm() {
   };
 
   return (
-    <div style={{ backgroundColor: "#fff", padding: 24, borderRadius: 8 }}>
-      <h3 style={{ marginTop: 0 }}>Restablecer contraseña</h3>
-      <Form form={form} layout="vertical" onFinish={onFinish} style={{ width: "100%" }}>
+    <div className="reset-password-form">
+      <h3>Restablecer contraseña</h3>
+      <Form form={form} layout="vertical" onFinish={onFinish}>
         <Form.Item
           label="Nueva contraseña"
           name="newPassword"
@@ -63,20 +63,11 @@ export default function ResetPasswordForm() {
           <Input.Password placeholder="Confirmar contraseña" size="large" />
         </Form.Item>
 
-        <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 8 }}>
+        <div style={{ display: "flex", justifyContent: "flex-end" }}>
           <button
             type="button"
             onClick={() => form.submit()}
-            style={{
-              background: "#2563eb",
-              color: "#fff",
-              border: "none",
-              borderRadius: 6,
-              padding: "10px 22px",
-              fontWeight: 600,
-              cursor: loading ? "not-allowed" : "pointer",
-              opacity: loading ? 0.75 : 1,
-            }}
+            className="reset-password-button"
             disabled={loading}
           >
             {loading ? "Guardando..." : "Reset Password"}

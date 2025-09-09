@@ -30,22 +30,24 @@ export default function ChangePasswordForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="login-form">
+    <form onSubmit={handleSubmit} className="change-password-form">
       <h2>Cambiar Contraseña</h2>
       <input
         type="password"
         placeholder="Nueva contraseña"
         value={newPassword}
         onChange={(e) => setNewPassword(e.target.value)}
+        className="password-input"
       />
       <input
         type="password"
         placeholder="Confirmar contraseña"
         value={confirmPassword}
         onChange={(e) => setConfirmPassword(e.target.value)}
+        className="password-input"
       />
       <button type="submit">Cambiar</button>
-      {message && <p>{message}</p>}
+      {message && <p className={message.includes("éxito") ? "success" : "error"}>{message}</p>}
     </form>
   );
 }

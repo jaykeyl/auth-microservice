@@ -5,7 +5,7 @@ export default function ResetPassword() {
   return (
     <div className="login-page">
       <h2 className="login-title">Reset Password</h2>
-      <div style={{ width: 420, margin: "0 auto" }}>
+      <div className="reset-password-container">
         <ResetPasswordForm />
       </div>
     </div>
