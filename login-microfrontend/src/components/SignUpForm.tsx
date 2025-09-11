@@ -110,28 +110,17 @@ export default function SignUpForm() {
   };
 
   return (
-    <div
-      style={{
-        backgroundColor: "#FFFFFF",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        flexDirection: "column",
-        padding: "0 50px",
-        height: "100%",
-        textAlign: "center",
-      }}
-    >
-      <h1 style={{ fontWeight: "bold", margin: 0 }}>Create Account</h1>
+    <div className="signup-form-container">
+      <h1 className="signup-title">Create Account</h1>
       <SocialLoginButtons />
-      <span style={{ fontSize: "12px" }}>
+      <span className="signup-subtitle">
         or use your email for registration
       </span>
       <Form
         form={form}
         layout="vertical"
         onFinish={onFinish}
-        style={{ width: "100%", marginTop: "16px" }}
+        className="signup-form"
       >
         <Form.Item name="firstName">
           <Input
@@ -175,17 +164,7 @@ export default function SignUpForm() {
         </PrimaryButton>
       </Form>
       {apiError && (
-        <div
-          style={{
-            marginTop: "16px",
-            padding: "8px 16px",
-            backgroundColor: "#fff2f0",
-            border: "1px solid #ffccc7",
-            borderRadius: "4px",
-            color: "#cf1322",
-            fontSize: "14px",
-          }}
-        >
+        <div className="signup-error">
           {apiError}
         </div>
       )}
@@ -197,12 +176,11 @@ export default function SignUpForm() {
         closable={false}
         okText="Aceptar"
         cancelButtonProps={{ style: { display: "none" } }}
+        className="signup-modal"
       >
-        <div style={{ textAlign: "center" }}>
-          <h3 style={{ marginBottom: 8 }}>Cuenta creada</h3>
-          <p style={{ marginTop: 0, color: "#6b7280" }}>
-            Tu cuenta se ha creado correctamente.
-          </p>
+        <div className="signup-success-modal">
+          <h3>Cuenta creada</h3>
+          <p>Tu cuenta se ha creado correctamente.</p>
         </div>
       </Modal>
     </div>
